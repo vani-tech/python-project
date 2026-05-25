@@ -1,10 +1,9 @@
-from flask import Flask
+#!/bin/bash
 
-app = Flask(__name__)
+set -e
 
-@app.route("/")
-def home():
-    return "HR System Running with Maven + Python 🚀"
+echo "Installing dependencies..."
+pip3 install -r requirements.txt
 
-if __name__ == "__main__":
-    app.run(debug=True)
+echo "Starting Python app..."
+python3 app.py
