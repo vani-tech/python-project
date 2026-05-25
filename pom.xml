@@ -1,5 +1,6 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,39 +18,23 @@
 
                 <executions>
 
-                    <!-- INSTALL DEPENDENCIES -->
                     <execution>
                         <id>install-deps</id>
-                        <phase>compile</phase>
+                        <phase>generate-sources</phase>
+
                         <goals>
                             <goal>exec</goal>
                         </goals>
 
                         <configuration>
-                            <executable>python3</executable>
+                            <executable>pip3</executable>
+
                             <arguments>
-                                <argument>-m</argument>
-                                <argument>pip</argument>
                                 <argument>install</argument>
                                 <argument>-r</argument>
                                 <argument>requirements.txt</argument>
                             </arguments>
-                        </configuration>
-                    </execution>
 
-                    <!-- RUN APP -->
-                    <execution>
-                        <id>run-app</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-
-                        <configuration>
-                            <executable>python3</executable>
-                            <arguments>
-                                <argument>app.py</argument>
-                            </arguments>
                         </configuration>
                     </execution>
 
