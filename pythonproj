@@ -1,0 +1,146 @@
+import os
+import zipfile
+
+project = "hr-management-system"
+
+files = {
+
+    # ---------------- APP ----------------
+    f"{project}/app.py": """
+from flask import Flask, request, session, redirect, jsonify
+import sqlite3
+
+app = Flask(__name__)
+app.secret_key = "hr_secret"
+
+# ---------------- DB INIT ----------------
+def init_db():
+    conn = sqlite3.connect("hr.db")
+    c = conn.cursor()
+
+    c.execute('''CREATE TABLE IF NOT EXISTS employees (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        role TEXT,
+        salary INTEGER
+    )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        emp_id INTEGER,
+        status TEXT
+    )''')
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# ---------------- LOGIN ----------------
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        if request.form["username"] == "admin" and request.form["password"] == "admin":
+            session["user"] = "admin"
+            return redirect("/dashboard")
+
+    return '''
+    <h2>Login</h2>
+    <form method="POST">
+        <input name="username" placeholder="username"><br><br>
+        <input name="password" type="password"><br><br>
+        <button>Login</button>
+    </form>
+    '''
+
+# ---------------- DASHBOARD ----------------
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect("/")
+
+    return '''
+    <h1>HR Dashboard</h1>
+    <a href="/employees">Employees</a><br>
+    <a href="/attendance">Attendance</a><br>
+    <a href="/logout">Logout</a>
+    '''
+
+# ---------------- ADD EMPLOYEE ----------------
+@app.route("/employees", methods=["GET", "POST"])
+def employees():
+    conn = sqlite3.connect("hr.db")
+    c = conn.cursor()
+
+    if request.method == "POST":
+        c.execute("INSERT INTO employees(name, role, salary) VALUES(?,?,?)",
+                  (request.form["name"], request.form["role"], request.form["salary"]))
+        conn.commit()
+
+    data = c.execute("SELECT * FROM employees").fetchall()
+    conn.close()
+
+    return str(data)
+
+# ---------------- ATTENDANCE ----------------
+@app.route("/attendance", methods=["GET", "POST"])
+def attendance():
+    conn = sqlite3.connect("hr.db")
+    c = conn.cursor()
+
+    if request.method == "POST":
+        c.execute("INSERT INTO attendance(emp_id, status) VALUES(?,?)",
+                  (request.form["emp_id"], request.form["status"]))
+        conn.commit()
+
+    data = c.execute("SELECT * FROM attendance").fetchall()
+    conn.close()
+
+    return str(data)
+
+# ---------------- LOGOUT ----------------
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+""",
+
+    # ---------------- REQUIREMENTS ----------------
+    f"{project}/requirements.txt": "flask\n",
+
+    # ---------------- README ----------------
+    f"{project}/README.md": """
+HR MANAGEMENT SYSTEM
+
+Features:
+- Login system
+- Employee management
+- Attendance system
+- Salary tracking (basic)
+
+RUN:
+pip install flask
+python app.py
+"""
+}
+
+# ---------------- CREATE FILES ----------------
+for path, content in files.items():
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+print("✅ Project created")
+
+# ---------------- CREATE ZIP ----------------
+zip_name = project + ".zip"
+
+with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zipf:
+    for root, dirs, fs in os.walk(project):
+        for file in fs:
+            zipf.write(os.path.join(root, file))
+
+print("📦 ZIP READY:", zip_name)
