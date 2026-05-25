@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hr</groupId>
+    <artifactId>python-maven-app</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <plugins>
+
+            <!-- STEP 1: Install Python dependencies -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+
+                <!-- Install requirements -->
+                <executions>
+                    <execution>
+                        <id>install-deps</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <executable>pip</executable>
+                            <arguments>
+                                <argument>install</argument>
+                                <argument>-r</argument>
+                                <argument>requirements.txt</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- STEP 2: Run Python app -->
+                    <execution>
+                        <id>run-app</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <executable>python</executable>
+                            <arguments>
+                                <argument>app.py</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
