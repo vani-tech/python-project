@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0">
 
     <modelVersion>4.0.0</modelVersion>
@@ -9,14 +10,14 @@
     <build>
         <plugins>
 
-            <!-- STEP 1: Install Python dependencies -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
 
-                <!-- Install requirements -->
                 <executions>
+
+                    <!-- INSTALL DEPENDENCIES -->
                     <execution>
                         <id>install-deps</id>
                         <phase>compile</phase>
@@ -25,8 +26,10 @@
                         </goals>
 
                         <configuration>
-                            <executable>pip</executable>
+                            <executable>python3</executable>
                             <arguments>
+                                <argument>-m</argument>
+                                <argument>pip</argument>
                                 <argument>install</argument>
                                 <argument>-r</argument>
                                 <argument>requirements.txt</argument>
@@ -34,7 +37,7 @@
                         </configuration>
                     </execution>
 
-                    <!-- STEP 2: Run Python app -->
+                    <!-- RUN APP -->
                     <execution>
                         <id>run-app</id>
                         <phase>package</phase>
@@ -43,7 +46,7 @@
                         </goals>
 
                         <configuration>
-                            <executable>python</executable>
+                            <executable>python3</executable>
                             <arguments>
                                 <argument>app.py</argument>
                             </arguments>
